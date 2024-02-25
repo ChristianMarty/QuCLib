@@ -1,7 +1,7 @@
 //#ifdef TEST_RUN
 
 #include <catch2/catch.hpp>
-#include "../cobs.h"
+#include "../source/cobs.h"
 
 using namespace QuCLib;
 

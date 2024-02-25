@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include "../crc.h"
+#include "../source/crc.h"
 
 using namespace QuCLib;
 

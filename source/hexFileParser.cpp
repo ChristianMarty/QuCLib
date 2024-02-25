@@ -364,6 +364,7 @@ bool HexFileParser::load(QString filePath)
     _error.clear();
     _binary.clear();
 
+    _high16BitAddress = 0;
     _minFileAddress = 0xFFFFFFFF;
     _maxFileAddress = 0;
 

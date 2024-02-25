@@ -1,11 +1,14 @@
 #include <catch2/catch.hpp>
-#include "../hexFileParser.h"
+#include "../source/hexFileParser.h"
+using namespace QuCLib;
+
+QString testFileFolder = "C:/Users/Christian/Raumsteuerung/pc/QuCLib/test/hexFileParser/";
 
 TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
-    SECTION("Valid file") {
+    SECTION("Valid file 1") {
         HexFileParser parser;
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_1.hex");
+        parser.load(testFileFolder+"test_file_1.hex");
 
         REQUIRE(parser.errorCount() == 0);
 
@@ -15,9 +18,21 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         REQUIRE(parser.addressBinaryMaximum() == 0x0001125B);
     }
 
+    SECTION("Valid file 2") {
+        HexFileParser parser;
+        parser.load(testFileFolder+"test_file_2.hex");
+
+        REQUIRE(parser.errorCount() == 0);
+
+        REQUIRE(parser.addressFileMinimum() == 0x00000A00);
+        REQUIRE(parser.addressFileMaximum() == 0x00000B6F);
+        REQUIRE(parser.addressBinaryMinimum() == 0x00000A00);
+        REQUIRE(parser.addressBinaryMaximum() == 0x00000B6F);
+    }
+
     SECTION("Invalide checksum file") {
         HexFileParser parser;
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_invalid_checksum.hex");
+        parser.load(testFileFolder+"test_file_invalid_checksum.hex");
 
         REQUIRE(parser.errorCount() == 1);
         REQUIRE(parser.errors().at(0).error == parser.errorType::errorType_invalidChecksum);
@@ -27,7 +42,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         HexFileParser parser;
         parser.setAddressGapSize(16);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 0);
         REQUIRE(parser.binary().count() == 2);
@@ -52,7 +67,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         parser.setAddressGapSize(16);
         parser.setAddressAlignment(16);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 0);
         REQUIRE(parser.binary().count() == 2);
@@ -78,7 +93,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         HexFileParser parser;
         parser.setMemorySize(0x00010001, 0xFFFF);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 1);
         REQUIRE(parser.errors().at(0).error == parser.errorType::errorType_addressRangeTooLow);
@@ -88,7 +103,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         HexFileParser parser;
         parser.setMemorySize(0x00010000, 0x83);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 1);
         REQUIRE(parser.errors().at(0).error == parser.errorType::errorType_addressRangeTooHigh);
@@ -99,7 +114,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         parser.setAddressGapSize(32);
         parser.setAddressAlignment(16);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 0);
 
@@ -114,7 +129,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         parser.setAddressGapSize(32);
         parser.setAddressAlignment(16);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 0);
 
@@ -128,7 +143,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         parser.setAddressGapSize(32);
         parser.setAddressAlignment(16);
 
-        parser.load("C:\\Users\\Christian\\Raumsteuerung\\pc\\QCodebase\\_test\\hexFileParser\\test_file_with_gaps.hex");
+        parser.load(testFileFolder+"test_file_with_gaps.hex");
 
         REQUIRE(parser.errorCount() == 0);
 
