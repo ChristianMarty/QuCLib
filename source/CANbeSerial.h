@@ -8,10 +8,12 @@ struct CanBusFrame
 {
     bool isValide = false;
 
+    uint32_t timestamp;
     uint32_t identifier;
     bool extended;
     bool fd;
     bool rtr;
+    bool bitRateSwitch;
     QByteArray data;
 };
 
@@ -59,7 +61,10 @@ public:
         configurationStateCommand = 0xC9,
 
         deviceInformation = 0x0A,
-        deviceInformationRequest = 0x8A
+        deviceInformationRequest = 0x8A,
+
+        deviceStatus = 0x0B,
+        deviceStatusRequest = 0x8B
     };
 
 public slots:
@@ -83,9 +88,10 @@ private:
     int8_t _dlcToLength(uint8_t dlc);
     int8_t _lengthToDlc(uint8_t length);
 
-    bool _enabled = false;
     Baudrate _baudrate = Baudrate::Baud125k;
     Baudrate _fdBaudrate = Baudrate::Baud125k;
+    bool _submissive = false;
+    bool _enabled = false;
     bool _automaticRetransmission = false;
     bool _silentMode = false;
 
