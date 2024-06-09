@@ -1,6 +1,6 @@
 # QuCLib
 
-The Qt Microcontroller Library (Not to be confused with "Qt for MCU") is a collection of small functions and classes that are useful when interacting with microcontrollers. 
+The QuCLib is a collection of small functions and classes that are useful when interacting with microcontrollers. 
 
 It currently includes:
 + COBS (Consistent Overhead Byte Stuffing) Encoder / Decoder
@@ -8,7 +8,7 @@ It currently includes:
 + HEX File Parser
 
 ## How to install/use
-Copy the files you need into your project or use this repository as a submodule.
+Copy the files you need into your project or use this repository as a submodule. Include the files you need into your project.
 
 The dependencies have been limited to Qt Core.
 
