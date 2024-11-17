@@ -37,7 +37,7 @@ void CANbeSerial::setTxPaddingEnable(bool enabled, char value)
 
 void CANbeSerial::receive(QByteArray data)
 {
-    QByteArrayList frames = _cobsDecoder.streamDecode(data);
+    QByteArrayList frames = _cobs.streamDecode(data);
 
     QByteArrayList::iterator i;
     for (i = frames.begin(); i != frames.end(); ++i)
@@ -84,7 +84,7 @@ void CANbeSerial::_buildMessage(PayloadId payloadId, QByteArray data)
     data.append((uint8_t)(crc>>8));
     data.append((uint8_t)crc&0xFF);
 
-    emit writeReady(QuCLib::Cobs::encode(data).prepend((char)0));
+    emit writeReady(_cobs.encode(data).prepend((char)0));
 }
 
 void CANbeSerial::_sendConfiguration()
