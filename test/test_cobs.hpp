@@ -7,11 +7,13 @@ using namespace QuCLib;
 
 TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
 
+    Cobs cobs;
+
     SECTION( "Encode valide frame" ) {
         QByteArray input = QByteArray("\x01\x00\x17\x43", 4);
         QByteArray pass = QByteArray("\x02\x01\x03\x17\x43\x00", 6);
 
-        QByteArray output = Cobs::encode(input);
+        QByteArray output = cobs.encode(input);
         
         REQUIRE(output == pass);
     }
@@ -20,7 +22,7 @@ TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
         QByteArray input = QByteArray("", 0);
         QByteArray pass = QByteArray("\x01\x00", 2);
 
-        QByteArray output = Cobs::encode(input);
+        QByteArray output = cobs.encode(input);
 
         REQUIRE(output == pass);
     }
@@ -29,7 +31,7 @@ TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
         QByteArray input = QByteArray("\x00", 1);
         QByteArray pass = QByteArray("\x01\x01\x00", 3);
 
-        QByteArray output = Cobs::encode(input);
+        QByteArray output = cobs.encode(input);
 
         REQUIRE(output == pass);
     }
@@ -38,7 +40,7 @@ TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
         QByteArray input = QByteArray("\x00\x00\x00\x00\x00", 5);
         QByteArray pass = QByteArray("\x01\x01\x01\x01\x01\x01\x00", 7);
 
-        QByteArray output = Cobs::encode(input);
+        QByteArray output = cobs.encode(input);
 
         REQUIRE(output == pass);
     }
@@ -47,7 +49,7 @@ TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
         QByteArray input = QByteArray("\x77", 1);
         QByteArray pass = QByteArray("\x02\x77\x00", 3);
 
-        QByteArray output = Cobs::encode(input);
+        QByteArray output = cobs.encode(input);
 
         REQUIRE(output == pass);
     }
@@ -56,7 +58,7 @@ TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
         QByteArray input = QByteArray("\x77\x66\x55\x44", 4);
         QByteArray pass = QByteArray("\x05\x77\x66\x55\x44\x00", 6);
 
-        QByteArray output = Cobs::encode(input);
+        QByteArray output = cobs.encode(input);
 
         REQUIRE(output == pass);
     }
@@ -65,11 +67,13 @@ TEST_CASE( "Test Cobs_encode", "[Cobs_encode]" ) {
 
 TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
 
+    Cobs cobs;
+
     SECTION("Decode valide frame") {
         QByteArray input = QByteArray("\x02\x01\x03\x17\x23\x00", 6);
         QByteArray pass = QByteArray("\x01\x00\x17\x23",4);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -78,7 +82,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x00\x00\x00\x02\x01\x03\x17\x23\x00", 9);
         QByteArray pass = QByteArray("\x01\x00\x17\x23",4);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -87,7 +91,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
        QByteArray input = QByteArray("\x01\x00", 2);
        QByteArray pass = QByteArray("",0);
 
-       QByteArray output = Cobs::decode(input);
+       QByteArray output = cobs.decode(input);
 
        REQUIRE(output == pass);
     }
@@ -96,7 +100,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x01\x01\x00", 3);
         QByteArray pass = QByteArray("\x00",1);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -105,7 +109,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x02\x77\x00", 3);
         QByteArray pass = QByteArray("\x77",1);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -114,7 +118,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x05\x77\x66\x55\x44\x00", 6);
         QByteArray pass = QByteArray("\x77\x66\x55\x44",4);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -123,7 +127,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x05\x77\x66\x55\x44\x09", 6);
         QByteArray pass = QByteArray("",0);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -132,7 +136,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("", 0);
         QByteArray pass = QByteArray("",0);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -141,7 +145,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x00", 1);
         QByteArray pass = QByteArray("",0);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -150,7 +154,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x00\x00\x00", 3);
         QByteArray pass = QByteArray("",0);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -159,7 +163,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x03\x77\x66\x00\x44\x00", 6);
         QByteArray pass = QByteArray("\x77\x66",2);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -168,7 +172,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x03\x77\x66\x02\x99\x00\x01\x00", 8);
         QByteArray pass = QByteArray("\x77\x66\x00\x99",4);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -177,7 +181,7 @@ TEST_CASE( "Test Cobs_decode", "[Cobs_decode]" ) {
         QByteArray input = QByteArray("\x03\x77\x66\x02\x00\x44\x00", 7);
         QByteArray pass = QByteArray("",0);
 
-        QByteArray output = Cobs::decode(input);
+        QByteArray output = cobs.decode(input);
 
         REQUIRE(output == pass);
     }
@@ -190,7 +194,7 @@ TEST_CASE( "Test Cobs stream decoder", "[Cobs_decodeStream]" ) {
 
     SECTION("Decode valide frame") {
         QByteArray input = QByteArray("\x02\x01\x03\x17\x23\x00", 6);
-        QByteArray pass = QByteArray("\x01\x00\x17\x23",4);
+        QByteArray pass = QByteArray("\x01\x00\x17\x23", 4);
 
         Cobs.clear();
         QByteArrayList output = Cobs.streamDecode(input);
@@ -201,7 +205,7 @@ TEST_CASE( "Test Cobs stream decoder", "[Cobs_decodeStream]" ) {
 
     SECTION("Decode frame with leading 0") {
         QByteArray input = QByteArray("\x00\x00\x00\x02\x01\x03\x17\x23\x00", 9);
-        QByteArray pass = QByteArray("\x01\x00\x17\x23",4);
+        QByteArray pass = QByteArray("\x01\x00\x17\x23", 4);
 
         Cobs.clear();
         QByteArrayList output = Cobs.streamDecode(input);
