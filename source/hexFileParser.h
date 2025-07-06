@@ -13,74 +13,78 @@ namespace QuCLib {
 class HexFileParser
 {
 	public:
-        enum errorType {
-            errorType_noError,
-            errorType_fileNotOpen,
-            errorType_invalidStartCode,
-            errorType_invalidLineLength,
-            errorType_invalidChecksum,
-            errorType_invalidRecordType,
-            errorType_addressRangeTooLow,
-            errorType_addressRangeTooHigh
+        enum class ErrorType {
+            NoError,
+            FileNotOpen,
+            InvalidStartCode,
+            InvalidLineLength,
+            InvalidChecksum,
+            InvalidRecordType,
+            InvalidAddressByte,
+            InvalidDataByte,
+            AddressRangeTooLow,
+            AddressRangeTooHigh
         };
 
-        struct fileError {
+        struct FileError {
             uint32_t lineIndex;
-            errorType error;
+            ErrorType error;
         };
 
-        struct binaryChunk {
+        struct BinaryChunk {
             uint32_t offset;
             QByteArray data;
         };
 
-        enum recordType {
-            recordType_data = 0,
-            recordType_endOfFile = 1,
-            recordType_extendedSegmentAddress = 2,
-            recordType_startSegmentAddress = 3,
-            recordType_extendedLinearAddress = 4,
-            recordType_startLinearAddress = 5
+        struct Range {
+            uint32_t minimum;
+            uint32_t maximum;
         };
+
 
         HexFileParser(void);
 
+        bool load(QString filePath);
+        bool saveToFile(QString filePath);
         void clear(void);
 
+        // data outside of the MemorySize range will be discarded
+        void setMemorySize(const Range &range);
         void setMemorySize(uint32_t addressOffset, uint32_t size);
-
-        bool load(QString filePath);
 
         void setAddressGapSize(uint32_t gap);
         void setAddressAlignment(uint32_t alignment);
 
         QByteArray extract(uint32_t address, uint32_t size);
         void replace(uint32_t address, QByteArray data);
-        void insert(binaryChunk data);
+        void insert(const BinaryChunk &data);
 
-        uint32_t addressFileMinimum(void);
-        uint32_t addressFileMaximum(void);
+        const Range &fileAddressRange(void) const;
+        const Range &binaryAddressRange(void) const;
+        const Range &memoryAddressRange(void) const;
 
-        uint32_t addressBinaryMinimum(void);
-        uint32_t addressBinaryMaximum(void);
+        QList<BinaryChunk> binary();
 
-        QList<binaryChunk> binary();
+        uint32_t errorCount(void) const;
+        uint32_t warningCount(void) const;
+        const QList<FileError> &errors(void) const;
+        const QList<FileError> &warnings(void) const;
 
-        uint32_t errorCount(void);
-        QList<fileError> errors(void);
-        static QString errorMessage(fileError error);
-
-        void saveToFile(QString filePath);
+        static QString errorMessage(const FileError &error);
 
     private:
-        uint32_t _minFileAddress;
-        uint32_t _maxFileAddress;
+        enum class RecordType: uint8_t {
+            Data = 0,
+            EndOfFile = 1,
+            ExtendedSegmentAddress = 2,
+            StartSegmentAddress = 3,
+            ExtendedLinearAddress = 4,
+            StartLinearAddress = 5
+        };
 
-        uint32_t _minBinaryAddress;
-        uint32_t _maxBinaryAddress;
-
-        uint32_t _minAddress;
-        uint32_t _maxAddress;
+        Range _fileAddress; // address range of the input file
+        Range _memorySize; // address range limit for the output
+        Range _binaryAddress; // the range of the loaded data
 
         uint32_t _addressGapSize;
         uint32_t _addressAlignment;
@@ -89,12 +93,13 @@ class HexFileParser
         void _parseLine(uint32_t lineIndex, QString line);
         void _combineBinaryChunks(void);
 
-        binaryChunk _fixChunkAddressAlignment(uint32_t offset, QByteArray data);
+        BinaryChunk _fixChunkAddressAlignment(uint32_t offset, QByteArray data);
 
         uint32_t _high16BitAddress;
 
-        QList<binaryChunk> _binary;
-        QList<fileError> _error;
+        QList<BinaryChunk> _binary;
+        QList<FileError> _error;
+        QList<FileError> _warning;
 
         uint8_t _calculateChecksum(QByteArray data);
 };

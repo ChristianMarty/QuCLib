@@ -2,7 +2,7 @@
 #include "../source/hexFileParser.h"
 using namespace QuCLib;
 
-QString testFileFolder = "C:/Users/Christian/Raumsteuerung/pc/QuCLib/test/hexFileParser/";
+QString testFileFolder = "C:/Users/Christian/Raumsteuerung/QuCLib/test/hexFileParser/";
 
 TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
@@ -12,10 +12,10 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
         REQUIRE(parser.errorCount() == 0);
 
-        REQUIRE(parser.addressFileMinimum() == 0x00010000);
-        REQUIRE(parser.addressFileMaximum() == 0x0001125B);
-        REQUIRE(parser.addressBinaryMinimum() == 0x00010000);
-        REQUIRE(parser.addressBinaryMaximum() == 0x0001125B);
+        REQUIRE(parser.fileAddressRange().minimum == 0x00010000);
+        REQUIRE(parser.fileAddressRange().maximum == 0x0001125B);
+        REQUIRE(parser.binaryAddressRange().minimum == 0x00010000);
+        REQUIRE(parser.binaryAddressRange().maximum == 0x0001125B);
     }
 
     SECTION("Valid file 2") {
@@ -24,10 +24,10 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
         REQUIRE(parser.errorCount() == 0);
 
-        REQUIRE(parser.addressFileMinimum() == 0x00000A00);
-        REQUIRE(parser.addressFileMaximum() == 0x00000B6F);
-        REQUIRE(parser.addressBinaryMinimum() == 0x00000A00);
-        REQUIRE(parser.addressBinaryMaximum() == 0x00000B6F);
+        REQUIRE(parser.fileAddressRange().minimum == 0x00000A00);
+        REQUIRE(parser.fileAddressRange().maximum == 0x00000B6F);
+        REQUIRE(parser.binaryAddressRange().minimum == 0x00000A00);
+        REQUIRE(parser.binaryAddressRange().maximum == 0x00000B6F);
     }
 
     SECTION("Invalide checksum file") {
@@ -35,7 +35,7 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
         parser.load(testFileFolder+"test_file_invalid_checksum.hex");
 
         REQUIRE(parser.errorCount() == 1);
-        REQUIRE(parser.errors().at(0).error == parser.errorType::errorType_invalidChecksum);
+        REQUIRE(parser.errors().at(0).error == HexFileParser::ErrorType::InvalidChecksum);
     }
 
     SECTION("Address range split and gap fill") {
@@ -95,18 +95,18 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
         parser.load(testFileFolder+"test_file_with_gaps.hex");
 
-        REQUIRE(parser.errorCount() == 1);
-        REQUIRE(parser.errors().at(0).error == parser.errorType::errorType_addressRangeTooLow);
+        REQUIRE(parser.warningCount() == 1);
+        REQUIRE(parser.warnings().at(0).error == HexFileParser::ErrorType::AddressRangeTooLow);
     }
 
     SECTION("Data outside addess range (Too high)") {
         HexFileParser parser;
-        parser.setMemorySize(0x00010000, 0x83);
+        parser.setMemorySize(0x00010000, 0x82);
 
         parser.load(testFileFolder+"test_file_with_gaps.hex");
 
-        REQUIRE(parser.errorCount() == 1);
-        REQUIRE(parser.errors().at(0).error == parser.errorType::errorType_addressRangeTooHigh);
+        REQUIRE(parser.warningCount() == 1);
+        REQUIRE(parser.warnings().at(0).error == HexFileParser::ErrorType::AddressRangeTooHigh);
     }
 
     SECTION("Data size") {
@@ -118,10 +118,10 @@ TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
         REQUIRE(parser.errorCount() == 0);
 
-        REQUIRE(parser.addressFileMinimum() == 0x00010000);
-        REQUIRE(parser.addressFileMaximum() == 0x00010083);
-        REQUIRE(parser.addressBinaryMinimum() == 0x00010000);
-        REQUIRE(parser.addressBinaryMaximum() == 0x0001008F);
+        REQUIRE(parser.fileAddressRange().minimum == 0x00010000);
+        REQUIRE(parser.fileAddressRange().maximum == 0x00010083);
+        REQUIRE(parser.binaryAddressRange().minimum == 0x00010000);
+        REQUIRE(parser.binaryAddressRange().maximum == 0x0001008F);
     }
 
     SECTION("Extract data") {
