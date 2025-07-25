@@ -353,6 +353,13 @@ void HexFileParser::_parseLine(uint32_t lineIndex, QString line)
 
 void HexFileParser::_combineBinaryChunks()
 {
+    if(_binary.empty()){
+        _binaryAddress.minimum = 0;
+        _binaryAddress.maximum = 0;
+
+        return;
+    }
+
     std::sort(_binary.begin(), _binary.end(), [](const BinaryChunk &a, const BinaryChunk &b){ return a.offset < b.offset; } );
 
     QList<BinaryChunk> combinedBinary;
