@@ -3,9 +3,7 @@ using namespace QuCLib;
 
 Cobs::Cobs(uint8_t delimiter)
     :_delimiter{delimiter}
-{
-
-}
+{}
 
 QByteArray Cobs::encode(QByteArray data)
 {

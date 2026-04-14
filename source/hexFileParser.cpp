@@ -86,7 +86,7 @@ uint8_t HexFileParser::_calculateChecksum(QByteArray data)
     return output;
 }
 
-QList<HexFileParser::BinaryChunk> HexFileParser::binary()
+QList<HexFileParser::BinaryChunk> HexFileParser::binary(void) const
 {
     return _binary;
 }

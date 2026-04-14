@@ -63,7 +63,7 @@ class HexFileParser
         const Range &binaryAddressRange(void) const;
         const Range &memoryAddressRange(void) const;
 
-        QList<BinaryChunk> binary();
+        QList<BinaryChunk> binary(void) const;
 
         uint32_t errorCount(void) const;
         uint32_t warningCount(void) const;
