@@ -94,7 +94,7 @@ QList<HexFileParser::BinaryChunk> HexFileParser::binary(void) const
 QByteArray HexFileParser::extract(uint32_t address, uint32_t size)
 {
     QByteArray output;
-    for(const BinaryChunk &data: _binary){
+    for(const BinaryChunk &data: std::as_const(_binary)){
         if(data.offset <= address){
             if(data.data.length() - (address-data.offset) >= size){
                 output = data.data.mid(address-data.offset, size);
@@ -156,9 +156,8 @@ bool HexFileParser::load(QString filePath)
 
     QString line;
     QFile hexFile(filePath);
-    hexFile.open(QIODevice::ReadOnly);
 
-    if(hexFile.isOpen()){
+    if(hexFile.open(QIODevice::ReadOnly)){
         uint32_t lineIndex = 0;
         while(!hexFile.atEnd())
         {
@@ -181,14 +180,14 @@ bool HexFileParser::load(QString filePath)
 bool HexFileParser::saveToFile(QString filePath)
 {
     QFile hexFile(filePath);
-    hexFile.open(QIODevice::WriteOnly);
-
-    if(!hexFile.isOpen()) return false;
+    if(!hexFile.open(QIODevice::WriteOnly)){
+        return false;
+    }
 
     QTextStream out(&hexFile);
 
     uint16_t offsetPrefix = 0;
-    for(const BinaryChunk &data: _binary)
+    for(const BinaryChunk &data: std::as_const(_binary))
     {
         if(data.offset  > 0xFFFF)
         {
@@ -368,7 +367,7 @@ void HexFileParser::_combineBinaryChunks()
     uint32_t chunkOffse = 0xFFFFFFFF;
     uint32_t nextOffset = _binary.first().offset;
 
-    for(const BinaryChunk &data: _binary)
+    for(const BinaryChunk &data: std::as_const(_binary))
     {
         if(nextOffset != data.offset) // If data in the address space is missing
         {
