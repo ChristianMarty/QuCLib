@@ -156,8 +156,9 @@ bool HexFileParser::load(QString filePath)
 
     QString line;
     QFile hexFile(filePath);
+    hexFile.open(QIODevice::ReadOnly);
 
-    if(hexFile.open(QIODevice::ReadOnly)){
+    if(hexFile.isOpen()){
         uint32_t lineIndex = 0;
         while(!hexFile.atEnd())
         {
