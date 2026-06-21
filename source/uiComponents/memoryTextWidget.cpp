@@ -10,7 +10,7 @@ MemoryTextWidget::MemoryTextWidget(QWidget *parent)
     setReadOnly(true);
 }
 
-void MemoryTextWidget::updateMemory(const QList<MemoryByte> &data, uint16_t appStart)
+void MemoryTextWidget::updateMemory(const QList<UiDatatypes::MemoryByte> &data, uint32_t appStart)
 {
     clear();
     append(QStringLiteral("                   00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F"));
@@ -29,7 +29,7 @@ void MemoryTextWidget::updateMemory(const QList<MemoryByte> &data, uint16_t appS
                 append(QStringLiteral("--------------  :  APP Start --------------------------------------"));
             }
 
-            MemoryByte byte = data.at(offset);
+            UiDatatypes::MemoryByte byte = data.at(offset);
             if(byte.read){
                 line +=QStringLiteral(" ")+QString::number(byte.byte,16).toUpper().rightJustified(2,'0');
             }else{

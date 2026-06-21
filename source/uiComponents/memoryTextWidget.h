@@ -2,19 +2,14 @@
 #define MEMORY_TEXT_WIDGET_H
 
 #include <QTextEdit>
+#include "uiDatatypes.h"
 
 class MemoryTextWidget : public QTextEdit
 {
 public:
     explicit MemoryTextWidget(QWidget *parent = nullptr);
 
-    struct MemoryByte {
-        bool read = false;
-        uint8_t byte;
-    };
-
-    void updateMemory(const QList<MemoryByte> &data, uint16_t appStart);
-
+    void updateMemory(const QList<UiDatatypes::MemoryByte> &data, uint32_t appStart = 0xFFFFFFFF);
 };
 
 #endif // MEMORY_TEXT_WIDGET_H
