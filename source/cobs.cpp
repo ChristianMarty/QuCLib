@@ -5,7 +5,7 @@ Cobs::Cobs(uint8_t delimiter)
     :_delimiter{delimiter}
 {}
 
-QByteArray Cobs::encode(QByteArray data)
+QByteArray Cobs::encode(const QByteArray &data)
 {
     QByteArray output;
     uint16_t delimiterIndex = 0;
@@ -26,31 +26,35 @@ QByteArray Cobs::encode(QByteArray data)
     return output;
 }
 
-QByteArray Cobs::decode(QByteArray data)
+QByteArray Cobs::decode(const QByteArray &data)
 {
     if(data.isEmpty()) return QByteArray();
 
     // Remove all leading delimiter bytes
-    while(data.at(0) == _delimiter){
-        data.remove(0, 1);
-        if(data.isEmpty()) return QByteArray();
+    int64_t offset = 0;
+    while(data.at(offset) == _delimiter){
+        offset++;
+
+        if(offset == data.size()){
+            return QByteArray();
+        }
     }
 
-    if(data.size() < 2) return QByteArray(); // If size too short for valid frame -> empty frame / no data
+    if(data.size() < 2+offset) return QByteArray(); // If size too short for valid frame -> empty frame / no data
     if(data.at(data.size()-1) != _delimiter) return QByteArray(); // If last byte is not delimiter -> No valid data
 
     QByteArray output;
     uint16_t i = 0;
-    uint16_t delimiterIndex = data.at(0);
+    uint16_t delimiterIndex = data.at(offset);
 
     for(i=1; i < data.size(); i++){
-        output.append(data.at(i));
+        output.append(data.at(offset+i));
         if(delimiterIndex == i){
-            if(data.at(i) == _delimiter) break;// End of frame
+            if(data.at(offset+i) == _delimiter) break;// End of frame
 
             delimiterIndex += output.at(i-1);
             output[i-1] = _delimiter;
-        }else if(data.at(i) == _delimiter){ // In case a delimiter is in a position where it should not be.
+        }else if(data.at(offset+i) == _delimiter){ // In case a delimiter is in a position where it should not be.
             return QByteArray();
         }
     }
@@ -59,7 +63,7 @@ QByteArray Cobs::decode(QByteArray data)
     return output;
 }
 
-QByteArrayList Cobs::streamDecode(QByteArray data)
+QByteArrayList Cobs::streamDecode(const QByteArray &data)
 {
     _buffer.push_back(data);
 
