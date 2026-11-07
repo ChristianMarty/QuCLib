@@ -2,7 +2,7 @@
 #include "../source/hexFileParser.h"
 using namespace QuCLib;
 
-QString testFileFolder = "C:/Users/Christian/Raumsteuerung/QuCLib/test/hexFileParser/";
+QString testFileFolder = "C:/Users/Christian/Projekte/QuCLib/test/hexFileParser/";
 
 TEST_CASE( "HEX File Parser", "[hexFileParser]" ) {
 
