@@ -7,60 +7,12 @@ Cobs::Cobs(uint8_t delimiter)
 
 QByteArray Cobs::encode(const QByteArray &data)
 {
-    QByteArray output;
-    uint16_t delimiterIndex = 0;
-    uint16_t i = 0;
-
-    output.append((uint8_t)0); // COBS index byte -> will be overwritten later
-
-    for(i = 0; i<data.size(); i++){
-        output.append(data.at(i));
-        if(output.at(i+1) == _delimiter){
-            output[delimiterIndex] = (i+1-delimiterIndex);
-            delimiterIndex = i+1;
-        }
-    }
-
-    output[delimiterIndex] = (i+1-delimiterIndex);
-    output.append(_delimiter); // Ending with delimiter
-    return output;
+    return encode(data, _delimiter);
 }
 
 QByteArray Cobs::decode(const QByteArray &data)
 {
-    if(data.isEmpty()) return QByteArray();
-
-    // Remove all leading delimiter bytes
-    int64_t offset = 0;
-    while(data.at(offset) == _delimiter){
-        offset++;
-
-        if(offset == data.size()){
-            return QByteArray();
-        }
-    }
-
-    if(data.size() < 2+offset) return QByteArray(); // If size too short for valid frame -> empty frame / no data
-    if(data.at(data.size()-1) != _delimiter) return QByteArray(); // If last byte is not delimiter -> No valid data
-
-    QByteArray output;
-    uint16_t i = 0;
-    uint16_t delimiterIndex = data.at(offset);
-
-    for(i=1; i < data.size(); i++){
-        output.append(data.at(offset+i));
-        if(delimiterIndex == i){
-            if(data.at(offset+i) == _delimiter) break;// End of frame
-
-            delimiterIndex += output.at(i-1);
-            output[i-1] = _delimiter;
-        }else if(data.at(offset+i) == _delimiter){ // In case a delimiter is in a position where it should not be.
-            return QByteArray();
-        }
-    }
-
-    output = output.remove(output.size()-1, 1); // remove trailing delimiter
-    return output;
+    return decode(data, _delimiter);
 }
 
 QByteArrayList Cobs::streamDecode(const QByteArray &data)
@@ -72,7 +24,7 @@ QByteArrayList Cobs::streamDecode(const QByteArray &data)
     int i= 0;
     while( i < _buffer.length()){
         if(_buffer.at(i) == _delimiter){
-            QByteArray temp = decode(_buffer.mid(0,i+1));
+            QByteArray temp = decode(_buffer.mid(0,i+1),_delimiter);
             if(temp.length()) output.append(temp);
             _buffer.remove(0,i+1);
             i = 0;
@@ -92,4 +44,62 @@ void Cobs::clear()
 uint8_t Cobs::delimiter() const
 {
     return _delimiter;
+}
+
+QByteArray Cobs::encode(const QByteArray &data, uint8_t delimiter)
+{
+    QByteArray output;
+    uint16_t delimiterIndex = 0;
+    uint16_t i = 0;
+
+    output.append((uint8_t)0); // COBS index byte -> will be overwritten later
+
+    for(i = 0; i<data.size(); i++){
+        output.append(data.at(i));
+        if(output.at(i+1) == delimiter){
+            output[delimiterIndex] = (i+1-delimiterIndex);
+            delimiterIndex = i+1;
+        }
+    }
+
+    output[delimiterIndex] = (i+1-delimiterIndex);
+    output.append(delimiter); // Ending with delimiter
+    return output;
+}
+
+QByteArray Cobs::decode(const QByteArray &data, uint8_t delimiter)
+{
+    if(data.isEmpty()) return QByteArray();
+
+    // Remove all leading delimiter bytes
+    int64_t offset = 0;
+    while(data.at(offset) == delimiter){
+        offset++;
+
+        if(offset == data.size()){
+            return QByteArray();
+        }
+    }
+
+    if(data.size() < 2+offset) return QByteArray(); // If size too short for valid frame -> empty frame / no data
+    if(data.at(data.size()-1) != delimiter) return QByteArray(); // If last byte is not delimiter -> No valid data
+
+    QByteArray output;
+    uint16_t i = 0;
+    uint16_t delimiterIndex = data.at(offset);
+
+    for(i=1; i < data.size(); i++){
+        output.append(data.at(offset+i));
+        if(delimiterIndex == i){
+            if(data.at(offset+i) == delimiter) break;// End of frame
+
+            delimiterIndex += output.at(i-1);
+            output[i-1] = delimiter;
+        }else if(data.at(offset+i) == delimiter){ // In case a delimiter is in a position where it should not be.
+            return QByteArray();
+        }
+    }
+
+    output = output.remove(output.size()-1, 1); // remove trailing delimiter
+    return output;
 }

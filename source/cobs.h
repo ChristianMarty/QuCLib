@@ -20,6 +20,9 @@ public:
 
     uint8_t delimiter() const;
 
+    static QByteArray encode(const QByteArray &data, uint8_t delimiter);
+    static QByteArray decode(const QByteArray &data, uint8_t delimiter);
+
 private:
     QByteArray _buffer;
     uint8_t _delimiter;
